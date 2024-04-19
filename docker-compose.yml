@@ -1,0 +1,12 @@
+services:
+  postgesql:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=kiosk
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
