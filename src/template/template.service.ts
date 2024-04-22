@@ -3,6 +3,7 @@ import { PrismaService } from '../common/prisma.service';
 import {
   CreateTemplateRequest,
   TemplateResponse,
+  UpdateTemplateRequest,
 } from '../model/template.model';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -32,5 +33,36 @@ export class TemplateService {
       data: createTemplateRequest,
     });
     return template;
+  }
+
+  async updateTemplate(
+    id: number,
+    UpdateTemplateRequest: UpdateTemplateRequest,
+  ) {
+    this.logger.debug(
+      `Update template ${id} ${JSON.stringify(UpdateTemplateRequest)}`,
+    );
+    this.validationService.validate(
+      TemplateValidate.Update,
+      UpdateTemplateRequest,
+    );
+    const template = await this.prismaService.template.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        ...UpdateTemplateRequest,
+      },
+    });
+
+    return template;
+  }
+
+  async findAll(): Promise<TemplateResponse[]> {
+    return this.prismaService.template.findMany();
+  }
+
+  async findById(id: number): Promise<TemplateResponse> {
+    return this.prismaService.template.findUnique({ where: { id } });
   }
 }
