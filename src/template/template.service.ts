@@ -9,6 +9,7 @@ import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ValidationService } from '../common/validation.service';
 import { TemplateValidate } from './template.validation';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class TemplateService {
@@ -16,6 +17,7 @@ export class TemplateService {
     private prismaService: PrismaService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
+    private eventsGateway: EventsGateway,
   ) {}
 
   async create(
@@ -37,23 +39,28 @@ export class TemplateService {
 
   async updateTemplate(
     id: number,
-    UpdateTemplateRequest: UpdateTemplateRequest,
-  ) {
+    updateTemplateRequest: UpdateTemplateRequest,
+  ): Promise<TemplateResponse> {
     this.logger.debug(
-      `Update template ${id} ${JSON.stringify(UpdateTemplateRequest)}`,
+      `Update template ${id} ${JSON.stringify(updateTemplateRequest)}`,
     );
     this.validationService.validate(
       TemplateValidate.Update,
-      UpdateTemplateRequest,
+      updateTemplateRequest,
     );
     const template = await this.prismaService.template.update({
       where: {
         id: Number(id),
       },
       data: {
-        ...UpdateTemplateRequest,
+        ...updateTemplateRequest,
       },
     });
+
+    // Emit a Socket.IO event after the update
+    if (template) {
+      this.eventsGateway.sendMessage(`Template with id ${id} has been updated`);
+    }
 
     return template;
   }

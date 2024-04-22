@@ -7,6 +7,7 @@ import { DeviceModule } from './device/device.module';
 import { ContentModule } from './content/content.module';
 import { FilesModule } from './files/files.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GatewayModule } from './gateway/gateway.module';
     ContentModule,
     FilesModule,
     GatewayModule,
+    EventsModule,
   ],
   controllers: [],
   providers: [],
