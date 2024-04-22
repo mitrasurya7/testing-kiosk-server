@@ -68,6 +68,9 @@ export class DeviceService {
       where: {
         deviceId: deviceId,
       },
+      include: {
+        template: true,
+      }
     });
   }
 
