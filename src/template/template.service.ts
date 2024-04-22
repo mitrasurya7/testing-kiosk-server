@@ -59,7 +59,7 @@ export class TemplateService {
 
     // Emit a Socket.IO event after the update
     if (template) {
-      this.eventsGateway.sendMessage(`Template with id ${id} has been updated`);
+      this.eventsGateway.sendMessage(`123456789`);
     }
 
     return template;

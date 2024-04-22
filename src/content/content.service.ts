@@ -67,13 +67,18 @@ export class ContentService {
         },
       });
 
-      // Delete the temporary file
-    //   fs.unlinkSync(file.path);
-
       return content;
     } catch (error) {
       this.logger.error('Failed to create content: ' + error);
       throw new InternalServerErrorException('Failed to create content');
     }
+  }
+
+  async findAll(): Promise<ContentResponse[]> {
+    return this.prismaService.content.findMany();
+  }
+
+  async findById(id: number): Promise<ContentResponse> {
+    return this.prismaService.content.findUnique({ where: { id } });
   }
 }

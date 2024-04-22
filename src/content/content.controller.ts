@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -8,13 +10,14 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '@prisma/client';
 import { Auth } from 'src/common/auth.decorator';
-import { CreateContentRequest } from '../model/content.model';
+import { ContentResponse, CreateContentRequest } from '../model/content.model';
 import { ContentService } from './content.service';
+import { WebResponse } from 'src/model/web.model';
 
 @Controller('/api/contents')
 export class ContentController {
   constructor(private contentService: ContentService) {}
-  @Post('/upload')
+  @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file,
@@ -32,6 +35,25 @@ export class ContentController {
 
     return {
       data: result,
+    };
+  }
+
+  @Get()
+  async getAll(@Auth() user: User): Promise<WebResponse<ContentResponse[]>> {
+    const contents = await this.contentService.findAll();
+    return {
+      data: contents,
+    };
+  }
+
+  @Get('/:id')
+  async getById(
+    @Auth() user: User,
+    @Param('id') id: number,
+  ): Promise<WebResponse<ContentResponse>> {
+    const content = await this.contentService.findById(id);
+    return {
+      data: content,
     };
   }
 }
