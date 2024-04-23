@@ -28,6 +28,7 @@ export class DeviceService {
       DeviceValidation.Create,
       createDeviceRequest,
     );
+
     const result = await this.prismaService.device.create({
       data: createDeviceRequest,
     });
@@ -43,41 +44,46 @@ export class DeviceService {
     id: string,
     updateDeviceRequest: UpdateDeviceRequest,
   ): Promise<DeviceResponse> {
-    this.logger.debug(
-      `Update Device at ${JSON.stringify(updateDeviceRequest)}`,
-    );
     this.validationService.validate(
       DeviceValidation.Update,
       updateDeviceRequest,
     );
 
-    const result = await this.prismaService.device.update({
-      where: {
-        id: id,
-      },
-      data: {
-        ...updateDeviceRequest,
-      },
+    const template = await this.prismaService.template.findUnique({
+      where: { id: updateDeviceRequest.activeTemplate },
     });
 
-    return result;
+    if (!template) {
+      throw new Error('Template not found');
+    }
+
+    if (template.deviceId !== id) {
+      throw new Error(
+        'Device cannot update to a template that is already being used.',
+      );
+    }
+
+    return this.prismaService.device.update({
+      where: { id },
+      data: updateDeviceRequest,
+    });
   }
 
   async getDeviceById(id: string): Promise<DeviceResponse> {
     return await this.prismaService.device.findUnique({
       where: {
-        id: id,
+        id,
       },
       include: {
         templates: true,
-      }
+      },
     });
   }
 
   async deleteDevice(id: string): Promise<DeviceResponse> {
     return await this.prismaService.device.delete({
       where: {
-        id: id,
+        id,
       },
     });
   }

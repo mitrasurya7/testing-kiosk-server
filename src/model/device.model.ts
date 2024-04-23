@@ -5,21 +5,22 @@ export class CreateDeviceRequest {
 }
 
 export class UpdateDeviceRequest {
-  id?: string;
   name?: string;
-  locationId?: number;
   status?: boolean;
   lastOnline?: Date;
   lastOffline?: Date;
   instalationDate?: Date;
+  locationId?: number;
+  activeTemplate?: number;
 }
 
 export class DeviceResponse {
   id: string;
   name: string;
-  locationId: number;
   status: boolean;
   lastOnline: Date;
   lastOffline: Date;
   instalationDate: Date;
+  locationId: number;
+  activeTemplate?: number;
 }

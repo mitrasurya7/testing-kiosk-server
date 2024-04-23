@@ -42,9 +42,9 @@ export class TemplateController {
 
   @Get()
   async getAll(@Auth() user: User): Promise<WebResponse<TemplateResponse[]>> {
-    const locations = await this.templateService.findAll();
+    const templates = await this.templateService.findAll();
     return {
-      data: locations,
+      data: templates,
     };
   }
 
@@ -53,9 +53,9 @@ export class TemplateController {
     @Auth() user: User,
     @Param('id') id: number,
   ): Promise<WebResponse<TemplateResponse>> {
-    const location = await this.templateService.findById(id);
+    const template = await this.templateService.findById(id);
     return {
-      data: location,
+      data: template,
     };
   }
 }

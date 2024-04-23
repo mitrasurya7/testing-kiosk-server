@@ -1,13 +1,7 @@
-import { HttpException, OnModuleInit } from '@nestjs/common';
-import {
-  MessageBody,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { OnModuleInit } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 import { Server } from 'socket.io';
-import { PrismaService } from '../common/prisma.service';
 import { DeviceService } from '../device/device.service';
 
 @WebSocketGateway({
@@ -24,7 +18,7 @@ export class Gateway implements OnModuleInit {
     this.server.on('connection', async (socket) => {
       try {
         const deviceId = socket.handshake.query['deviceId'] as string;
-        
+
         if (!deviceId) {
           console.log('No device ID provided');
           socket.disconnect();
