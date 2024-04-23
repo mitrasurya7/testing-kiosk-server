@@ -20,7 +20,7 @@ export class DeviceController {
     @Body()
     createDeviceRequest: CreateDeviceRequest,
   ): Promise<WebResponse<DeviceResponse>> {
-    const device = await this.deviceService.CreateDevice(createDeviceRequest);
+    const device = await this.deviceService.createDevice(createDeviceRequest);
 
     return {
       data: device,

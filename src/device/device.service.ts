@@ -9,6 +9,7 @@ import {
   UpdateDeviceRequest,
 } from '../model/device.model';
 import { DeviceValidation } from './device.validation';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class DeviceService {
@@ -16,9 +17,10 @@ export class DeviceService {
     private prismaService: PrismaService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
+    // private eventsGateway: EventsGateway,
   ) {}
 
-  async CreateDevice(
+  async createDevice(
     createDeviceRequest: CreateDeviceRequest,
   ): Promise<DeviceResponse> {
     this.logger.debug(
@@ -62,6 +64,15 @@ export class DeviceService {
         'Device cannot update to a template that is already being used.',
       );
     }
+
+    await this.prismaService.template.update({
+      where: { id: template.id },
+      data: {
+        status: true,
+      },
+    });
+
+    // this.eventsGateway.sendMessage(id);
 
     return this.prismaService.device.update({
       where: { id },

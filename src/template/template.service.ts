@@ -58,8 +58,8 @@ export class TemplateService {
     });
 
     // Emit a Socket.IO event after the update
-    if (template) {
-      this.eventsGateway.sendMessage(`123456789`);
+    if (template.status) {
+      this.eventsGateway.sendMessage(template.deviceId);
     }
 
     return template;
