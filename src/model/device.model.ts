@@ -1,26 +1,25 @@
 export class CreateDeviceRequest {
+  id: string;
   name: string;
-  deviceId: string;
   locationId: number;
-  templateId: number;
 }
 
 export class UpdateDeviceRequest {
+  id?: string;
   name?: string;
-  deviceId?: string;
   locationId?: number;
-  templateId?: number;
   status?: boolean;
-  last_online?: Date;
-  last_offline?: Date;
+  lastOnline?: Date;
+  lastOffline?: Date;
+  instalationDate?: Date;
 }
 
 export class DeviceResponse {
+  id: string;
   name: string;
-  deviceId: string;
   locationId: number;
   status: boolean;
-  last_online: Date;
-  last_offline: Date;
-  templateId: number;
+  lastOnline: Date;
+  lastOffline: Date;
+  instalationDate: Date;
 }

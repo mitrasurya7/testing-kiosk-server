@@ -43,7 +43,7 @@ export class Gateway implements OnModuleInit {
 
         await this.deviceService.updateDevice(deviceId, {
           status: true,
-          last_online: new Date(),
+          lastOnline: new Date(),
         });
         socket.emit('device', device);
 
@@ -51,7 +51,7 @@ export class Gateway implements OnModuleInit {
         socket.on('disconnect', async () => {
           await this.deviceService.updateDevice(deviceId, {
             status: false,
-            last_offline: new Date(),
+            lastOffline: new Date(),
           });
           console.log('disconnect');
         });

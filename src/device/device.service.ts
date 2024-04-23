@@ -40,7 +40,7 @@ export class DeviceService {
   }
 
   async updateDevice(
-    deviceId: string,
+    id: string,
     updateDeviceRequest: UpdateDeviceRequest,
   ): Promise<DeviceResponse> {
     this.logger.debug(
@@ -53,7 +53,7 @@ export class DeviceService {
 
     const result = await this.prismaService.device.update({
       where: {
-        deviceId: deviceId,
+        id: id,
       },
       data: {
         ...updateDeviceRequest,
@@ -63,21 +63,21 @@ export class DeviceService {
     return result;
   }
 
-  async getDeviceById(deviceId: string): Promise<DeviceResponse> {
+  async getDeviceById(id: string): Promise<DeviceResponse> {
     return await this.prismaService.device.findUnique({
       where: {
-        deviceId: deviceId,
+        id: id,
       },
       include: {
-        template: true,
+        templates: true,
       }
     });
   }
 
-  async deleteDevice(deviceId: string): Promise<DeviceResponse> {
+  async deleteDevice(id: string): Promise<DeviceResponse> {
     return await this.prismaService.device.delete({
       where: {
-        deviceId: deviceId,
+        id: id,
       },
     });
   }

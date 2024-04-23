@@ -1,14 +1,14 @@
 export class CreateTemplateRequest {
     name: string;
-    html_template: string;
+    htmlCode: string;
 }
 
 export class UpdateTemplateRequest {
     name: string;
-    html_template: string;
+    htmlCode: string;
 }
 
 export class TemplateResponse {
     name: string;
-    html_template: string;
+    htmlCode: string;
 }
