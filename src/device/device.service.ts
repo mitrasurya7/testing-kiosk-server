@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -17,7 +17,7 @@ export class DeviceService {
     private prismaService: PrismaService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
-    // private eventsGateway: EventsGateway,
+    private eventsGateway: EventsGateway,
   ) {}
 
   async createDevice(
@@ -51,16 +51,18 @@ export class DeviceService {
       updateDeviceRequest,
     );
 
+    const { activeTemplate } = updateDeviceRequest;
+
     const template = await this.prismaService.template.findUnique({
-      where: { id: updateDeviceRequest.activeTemplate },
+      where: { id: activeTemplate },
     });
 
     if (!template) {
-      throw new Error('Template not found');
+      throw new NotFoundException('Template not found');
     }
 
     if (template.deviceId !== id) {
-      throw new Error(
+      throw new BadRequestException(
         'Device cannot update to a template that is already being used.',
       );
     }
@@ -72,7 +74,11 @@ export class DeviceService {
       },
     });
 
-    // this.eventsGateway.sendMessage(id);
+    const device = await this.getDeviceById(id);
+
+    if (device) {
+      this.eventsGateway.sendMessage(device);
+    }
 
     return this.prismaService.device.update({
       where: { id },

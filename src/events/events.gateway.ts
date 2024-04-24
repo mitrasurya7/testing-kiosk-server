@@ -5,14 +5,12 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { DeviceService } from 'src/device/device.service';
 
 @Injectable()
 @WebSocketGateway({
   namespace: 'events',
 })
 export class EventsGateway implements OnGatewayConnection {
-  constructor(private deviceService: DeviceService) {}
   @WebSocketServer() server: Server;
 
   handleConnection(deviceId: string, ...args: any[]) {
@@ -20,25 +18,17 @@ export class EventsGateway implements OnGatewayConnection {
   }
 
   async handleDisconnect(deviceId: string) {
-    console.log('Device disconnected', deviceId); 
+    console.log('Device disconnected', deviceId);
   }
 
-  async sendMessage(deviceId: string) {
-    if (!deviceId) {
-      console.log('No device ID provided');
-      this.handleDisconnect(deviceId);
-      return;
-    }
-
-    const device = await this.deviceService.getDeviceById(deviceId);
-
+  async sendMessage(device: any) {
     if (!device) {
       this.server.emit('device', 'Device not found');
       console.log('Device not found');
-      this.handleDisconnect(deviceId);
+      this.handleDisconnect(device.id);
       return;
     }
-    
+
     this.server.emit('device', device);
   }
 }

@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { Gateway } from './gateway';
-import { DeviceService } from 'src/device/device.service';
+import { DeviceModule } from 'src/device/device.module';
 @Module({
-    providers: [Gateway, DeviceService],
+    imports: [
+        DeviceModule
+    ],
+    providers: [Gateway],
 })
 export class GatewayModule {}

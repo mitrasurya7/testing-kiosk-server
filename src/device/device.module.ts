@@ -7,5 +7,6 @@ import { EventsModule } from 'src/events/events.module';
   imports: [EventsModule],
   providers: [DeviceService],
   controllers: [DeviceController],
+  exports: [DeviceService],
 })
 export class DeviceModule {}

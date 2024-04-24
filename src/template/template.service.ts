@@ -10,6 +10,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ValidationService } from '../common/validation.service';
 import { TemplateValidate } from './template.validation';
 import { EventsGateway } from 'src/events/events.gateway';
+import { DeviceService } from 'src/device/device.service';
 
 @Injectable()
 export class TemplateService {
@@ -18,6 +19,7 @@ export class TemplateService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
     private eventsGateway: EventsGateway,
+    private readonly deviceService: DeviceService
   ) {}
 
   async create(
@@ -48,21 +50,25 @@ export class TemplateService {
       TemplateValidate.Update,
       updateTemplateRequest,
     );
-    const template = await this.prismaService.template.update({
-      where: {
-        id: Number(id),
-      },
-      data: {
-        ...updateTemplateRequest,
+
+    const { status, deviceId } = await this.prismaService.template.update({
+      where: { id: Number(id) },
+      data: updateTemplateRequest,
+      select: {
+        status: true,
+        deviceId: true,
       },
     });
 
     // Emit a Socket.IO event after the update
-    if (template.status) {
-      this.eventsGateway.sendMessage(template.deviceId);
+    if (status) {
+      const device = await this.deviceService.getDeviceById(deviceId);
+      if (device) {
+        this.eventsGateway.sendMessage(device);
+      }
     }
 
-    return template;
+    return this.findById(id);
   }
 
   async findAll(): Promise<TemplateResponse[]> {

@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -20,7 +21,7 @@ model User {
   password   String    @db.VarChar(100)
   role       String    @db.VarChar(100)
   token      String?   @db.Uuid
-  location   Location? @relation(fields: [locationId], references: [id])
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
   locationId Int
   contents   Content[]
   updatedAt  DateTime  @default(now()) @updatedAt
@@ -49,7 +50,7 @@ model Device {
   lastOnline      DateTime?
   lastOffline     DateTime?
   instalationDate DateTime   @default(now())
-  location        Location?  @relation(fields: [locationId], references: [id])
+  location        Location?  @relation(fields: [locationId], references: [id], onDelete: SetNull)
   locationId      Int
   templates       Template[]
   updatedAt       DateTime   @default(now()) @updatedAt
@@ -63,7 +64,7 @@ model Template {
   name      String    @db.VarChar(100)
   htmlCode  String    @db.Text
   status    Boolean   @default(false)
-  device    Device?   @relation(fields: [deviceId], references: [id])
+  device    Device?   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId  String
   contents  Content[]
   updatedAt DateTime  @default(now()) @updatedAt
@@ -77,12 +78,13 @@ model Content {
   title      String    @db.VarChar(100)
   url        String    @db.VarChar(100)
   type       String    @db.VarChar(100)
-  template   Template? @relation(fields: [templateId], references: [id])
+  template   Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
   templateId Int?
-  user       User?     @relation(fields: [userId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int?
   updatedAt  DateTime  @default(now()) @updatedAt
   createdAt  DateTime  @default(now())
 
   @@map("contents")
 }
+
