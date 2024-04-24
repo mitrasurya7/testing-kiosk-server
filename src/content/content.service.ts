@@ -79,6 +79,6 @@ export class ContentService {
   }
 
   async findById(id: number): Promise<ContentResponse> {
-    return this.prismaService.content.findUnique({ where: { id } });
+    return this.prismaService.content.findUnique({ where: { id: Number(id) } });
   }
 }

@@ -70,6 +70,8 @@ export class TemplateService {
   }
 
   async findById(id: number): Promise<TemplateResponse> {
-    return this.prismaService.template.findUnique({ where: { id } });
+    return this.prismaService.template.findUnique({
+      where: { id: Number(id) },
+    });
   }
 }

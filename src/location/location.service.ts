@@ -40,10 +40,13 @@ export class LocationService {
     id: number,
     UpdateLocationRequest: UpdateLocationRequest,
   ) {
-    this.logger.debug(`Update location ${id} ${JSON.stringify(UpdateLocationRequest)}`);
+    this.logger.debug(
+      `Update location ${id} ${JSON.stringify(UpdateLocationRequest)}`,
+    );
     this.validationService.validate(
-      LocationValidate.Update, UpdateLocationRequest,
-    )
+      LocationValidate.Update,
+      UpdateLocationRequest,
+    );
     const location = await this.prismaService.location.update({
       where: {
         id: Number(id),
@@ -61,6 +64,8 @@ export class LocationService {
   }
 
   async findById(id: number): Promise<LocationResponse> {
-    return this.prismaService.location.findUnique({ where: { id } });
+    return this.prismaService.location.findUnique({
+      where: { id: Number(id) },
+    });
   }
 }
