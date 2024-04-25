@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -51,10 +56,10 @@ export class DeviceService {
       updateDeviceRequest,
     );
 
-    const { activeTemplate } = updateDeviceRequest;
+    const device = await this.getDeviceById(id);
 
     const template = await this.prismaService.template.findUnique({
-      where: { id: activeTemplate },
+      where: { id: device.activeTemplate },
     });
 
     if (!template) {
@@ -73,8 +78,6 @@ export class DeviceService {
         status: true,
       },
     });
-
-    const device = await this.getDeviceById(id);
 
     if (device) {
       this.eventsGateway.sendMessage(device);

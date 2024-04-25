@@ -2,7 +2,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 import { Server } from 'socket.io';
-import { DeviceService } from '../device/device.service';
+import { DeviceService } from 'src/device/device.service';
 
 @WebSocketGateway({
   cors: {
@@ -35,11 +35,11 @@ export class Gateway implements OnModuleInit {
           return;
         }
 
-        await this.deviceService.updateDevice(deviceId, {
+        const updatedDevice = await this.deviceService.updateDevice(deviceId, {
           status: true,
           lastOnline: new Date(),
         });
-        socket.emit('device', device);
+        socket.emit('device', updatedDevice);
 
         // Handle disconnection
         socket.on('disconnect', async () => {
