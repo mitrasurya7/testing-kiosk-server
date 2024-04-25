@@ -56,26 +56,11 @@ export class DeviceService {
       updateDeviceRequest,
     );
 
-    const device = await this.getDeviceById(id);
-
-    const template = await this.prismaService.template.findUnique({
-      where: { id: device.activeTemplate },
-    });
-
-    if (!template) {
-      throw new NotFoundException('Template not found');
-    }
-
-    if (template.deviceId !== id) {
-      throw new BadRequestException(
-        'Device cannot update to a template that is already being used.',
-      );
-    }
-
-    await this.prismaService.template.update({
-      where: { id: template.id },
-      data: {
-        status: true,
+    const device = await this.prismaService.device.update({
+      where: { id },
+      data: updateDeviceRequest,
+      include: {
+        template: true,
       },
     });
 
@@ -83,10 +68,7 @@ export class DeviceService {
       this.eventsGateway.sendMessage(device);
     }
 
-    return this.prismaService.device.update({
-      where: { id },
-      data: updateDeviceRequest,
-    });
+    return device;
   }
 
   async getDeviceById(id: string): Promise<DeviceResponse> {
@@ -95,7 +77,7 @@ export class DeviceService {
         id,
       },
       include: {
-        templates: true,
+        template: true,
       },
     });
   }

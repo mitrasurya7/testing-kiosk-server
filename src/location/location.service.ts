@@ -38,21 +38,21 @@ export class LocationService {
 
   async updateLocation(
     id: number,
-    UpdateLocationRequest: UpdateLocationRequest,
+    updateLocationRequest: UpdateLocationRequest,
   ) {
     this.logger.debug(
-      `Update location ${id} ${JSON.stringify(UpdateLocationRequest)}`,
+      `Update location ${id} ${JSON.stringify(updateLocationRequest)}`,
     );
     this.validationService.validate(
       LocationValidate.Update,
-      UpdateLocationRequest,
+      updateLocationRequest,
     );
     const location = await this.prismaService.location.update({
       where: {
         id: Number(id),
       },
       data: {
-        ...UpdateLocationRequest,
+        ...updateLocationRequest,
       },
     });
 

@@ -19,7 +19,7 @@ export class TemplateService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
     private eventsGateway: EventsGateway,
-    private readonly deviceService: DeviceService
+    private readonly deviceService: DeviceService,
   ) {}
 
   async create(
@@ -51,24 +51,23 @@ export class TemplateService {
       updateTemplateRequest,
     );
 
-    const { status, deviceId } = await this.prismaService.template.update({
-      where: { id: Number(id) },
+    const template = await this.prismaService.template.update({
+      where: {
+        id: Number(id),
+      },
       data: updateTemplateRequest,
-      select: {
-        status: true,
-        deviceId: true,
+      include: {
+        devices: true,
       },
     });
 
-    // Emit a Socket.IO event after the update
-    if (status) {
-      const device = await this.deviceService.getDeviceById(deviceId);
-      if (device) {
-        this.eventsGateway.sendMessage(device);
-      }
+    if (template.devices.length) {
+      template.devices.forEach((el) => {
+        this.eventsGateway.sendMessage(el);
+      });
     }
 
-    return this.findById(id);
+    return template;
   }
 
   async findAll(): Promise<TemplateResponse[]> {
