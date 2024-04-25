@@ -1,5 +1,5 @@
 export class CreateContentRequest {
-    title: string;
+    name: string;
     // file: Express.Multer.File; // Assuming you're using Express with Multer
 }
 
