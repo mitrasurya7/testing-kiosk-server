@@ -26,15 +26,6 @@ export class Gateway implements OnModuleInit {
         }
 
         console.log('User connected', deviceId);
-        const device = await this.deviceService.getDeviceById(deviceId);
-
-        if (!device) {
-          socket.emit('device', 'Device not found');
-          console.log('Device not found');
-          socket.disconnect();
-          return;
-        }
-
         const updatedDevice = await this.deviceService.updateDevice(deviceId, {
           status: true,
           lastOnline: new Date(),

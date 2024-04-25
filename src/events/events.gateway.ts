@@ -14,14 +14,14 @@ export class EventsGateway implements OnGatewayConnection {
   @WebSocketServer() server: Server;
 
   handleConnection(deviceId: string, ...args: any[]) {
-    console.log('Device connected', deviceId);
+    console.log('Device connected');
   }
 
-  async handleDisconnect(deviceId: string) {
+  handleDisconnect(deviceId: string) {
     console.log('Device disconnected', deviceId);
   }
 
-  async sendMessage(device: any) {
+  sendMessage(device: any) {
     if (!device) {
       this.server.emit('device', 'Device not found');
       console.log('Device not found');

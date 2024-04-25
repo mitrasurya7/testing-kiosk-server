@@ -61,22 +61,27 @@ export class TemplateService {
       },
     });
 
-    if (template.devices.length) {
-      template.devices.forEach((el) => {
-        this.eventsGateway.sendMessage(el);
-      });
+    if (template.devices?.length) {
+      await Promise.all(
+        template.devices.map(async (el) => {
+          const device = await this.deviceService.getDeviceById(el.id);
+          this.eventsGateway.sendMessage(device);
+        }),
+      );
     }
-
     return template;
   }
 
   async findAll(): Promise<TemplateResponse[]> {
-    return this.prismaService.template.findMany();
+    return this.prismaService.template.findMany({
+      include: { devices: true },
+    });
   }
 
   async findById(id: number): Promise<TemplateResponse> {
     return this.prismaService.template.findUnique({
       where: { id: Number(id) },
+      include: { devices: true },
     });
   }
 }
