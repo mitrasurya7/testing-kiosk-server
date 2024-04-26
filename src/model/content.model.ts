@@ -1,6 +1,6 @@
 export class CreateContentRequest {
   name: string;
-  templateId?: number;
+  templateId: number;
   // file: Express.Multer.File; // Assuming you're using Express with Multer
 }
 
