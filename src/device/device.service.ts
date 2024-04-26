@@ -60,7 +60,11 @@ export class DeviceService {
       where: { id },
       data: updateDeviceRequest,
       include: {
-        template: true,
+        template: {
+          include: {
+            contents: true,
+          },
+        },
       },
     });
 
