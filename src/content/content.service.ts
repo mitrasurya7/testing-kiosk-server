@@ -61,9 +61,9 @@ export class ContentService {
         data: {
           title: createContentRequest.name,
           type: ext,
-          userId: userId,
+          userId,
+          templateId: createContentRequest.templateId,
           url: `${process.env.BACKEND_URL}/api/files/${fileName}`, // Store the full file path in the database
-          templateId: null,
         },
       });
 

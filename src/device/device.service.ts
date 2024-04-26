@@ -77,7 +77,11 @@ export class DeviceService {
         id,
       },
       include: {
-        template: true,
+        template: {
+          include: {
+            contents: true,
+          },
+        },
       },
     });
   }
