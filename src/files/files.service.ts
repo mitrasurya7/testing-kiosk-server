@@ -31,6 +31,12 @@ export class FilesService {
         return 'video/mp4';
       case '.mp3':
         return 'audio/mpeg';
+      case '.jpg':
+        return 'image/jpg';
+      case '.jpeg':
+        return 'image/jpeg';
+      case '.png':
+        return 'image/png';
       // Tambahkan jenis konten lain sesuai kebutuhan
       default:
         return 'application/octet-stream'; // Default content type

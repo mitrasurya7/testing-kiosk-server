@@ -1,10 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import {
   CreateTemplateRequest,
   TemplateResponse,
   UpdateTemplateRequest,
 } from '../model/template.model';
+import * as fs from 'fs';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ValidationService } from '../common/validation.service';
@@ -24,6 +32,7 @@ export class TemplateService {
 
   async create(
     createTemplateRequest: CreateTemplateRequest,
+    file: Express.Multer.File,
   ): Promise<TemplateResponse> {
     this.logger.debug(
       `Create new template ${JSON.stringify(createTemplateRequest)}`,
@@ -33,10 +42,42 @@ export class TemplateService {
       createTemplateRequest,
     );
 
-    const template = await this.prismaService.template.create({
-      data: createTemplateRequest,
-    });
-    return template;
+    if (!file) {
+      throw new BadRequestException('File not found');
+    }
+
+    try {
+      // Generate unique file name using UUID
+      const ext = path.extname(file.originalname);
+      const fileName = `${uuidv4()}${ext}`;
+
+      // Define storage directory
+      const storageDir = path.join(__dirname, '../../files');
+
+      // Check if the storage directory exists, if not, create it
+      if (!fs.existsSync(storageDir)) {
+        fs.mkdirSync(storageDir, { recursive: true });
+      }
+
+      // Define the file path
+      const filePath = path.join(storageDir, fileName);
+
+      // Move the uploaded file to the storage directory
+      fs.renameSync(file.path, filePath);
+
+      // Save content data to the database
+      const template = await this.prismaService.template.create({
+        data: {
+          ...createTemplateRequest,
+          coverImage: `${process.env.BACKEND_URL}/api/files/${fileName}`,
+        },
+      });
+
+      return template;
+    } catch (error) {
+      this.logger.error('Failed to create template: ' + error);
+      throw new InternalServerErrorException('Failed to create template');
+    }
   }
 
   async updateTemplate(

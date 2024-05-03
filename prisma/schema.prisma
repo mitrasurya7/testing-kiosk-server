@@ -60,13 +60,14 @@ model Device {
 }
 
 model Template {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(100)
-  htmlCode  String    @db.Text
-  devices   Device[]
-  contents  Content[]
-  updatedAt DateTime  @default(now()) @updatedAt
-  createdAt DateTime  @default(now())
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(100)
+  htmlCode   String    @db.Text
+  coverImage String    @db.VarChar(100)
+  devices    Device[]
+  contents   Content[]
+  updatedAt  DateTime  @default(now()) @updatedAt
+  createdAt  DateTime  @default(now())
 
   @@map("templates")
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { TemplateService } from './template.service';
 import { Auth } from '../common/auth.decorator';
 import { WebResponse } from '../model/web.model';
@@ -8,17 +17,27 @@ import {
   UpdateTemplateRequest,
 } from '../model/template.model';
 import { User } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('/api/templates')
 export class TemplateController {
   constructor(private templateService: TemplateService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   async create(
+    @UploadedFile() file,
     @Auth() user: User,
     @Body() createTemplateRequest: CreateTemplateRequest,
   ): Promise<WebResponse<TemplateResponse>> {
-    const template = await this.templateService.create(createTemplateRequest);
+    if (!file) {
+      throw new Error('File not found');
+    }
+
+    const template = await this.templateService.create(
+      createTemplateRequest,
+      file,
+    );
 
     return {
       data: template,
