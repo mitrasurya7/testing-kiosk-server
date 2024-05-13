@@ -1,8 +1,8 @@
 export class CreateDeviceRequest {
   id: string;
   name: string;
-  locationId?: number;
-  templateId: number;
+  locationId: number;
+  usedLayout: number;
 }
 
 export class UpdateDeviceRequest {
@@ -11,8 +11,8 @@ export class UpdateDeviceRequest {
   lastOnline?: Date;
   lastOffline?: Date;
   instalationDate?: Date;
+  usedLayout?: number;
   locationId?: number;
-  templateId?: number;
 }
 
 export class DeviceResponse {
@@ -22,6 +22,6 @@ export class DeviceResponse {
   lastOnline: Date;
   lastOffline: Date;
   instalationDate: Date;
+  usedLayout: number;
   locationId: number;
-  templateId: number;
 }

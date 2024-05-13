@@ -59,13 +59,6 @@ export class DeviceService {
     const device = await this.prismaService.device.update({
       where: { id },
       data: updateDeviceRequest,
-      include: {
-        template: {
-          include: {
-            contents: true,
-          },
-        },
-      },
     });
 
     if (device) {
@@ -81,11 +74,7 @@ export class DeviceService {
         id,
       },
       include: {
-        template: {
-          include: {
-            contents: true,
-          },
-        },
+        layouts: true,
       },
     });
   }

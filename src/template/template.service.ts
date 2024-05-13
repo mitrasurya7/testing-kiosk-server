@@ -97,32 +97,26 @@ export class TemplateService {
         id: Number(id),
       },
       data: updateTemplateRequest,
-      include: {
-        devices: true,
-      },
     });
 
-    if (template.devices?.length) {
-      await Promise.all(
-        template.devices.map(async (el) => {
-          const device = await this.deviceService.getDeviceById(el.id);
-          this.eventsGateway.sendMessage(device);
-        }),
-      );
-    }
+    // if (template.devices?.length) {
+    //   await Promise.all(
+    //     template.devices.map(async (el) => {
+    //       const device = await this.deviceService.getDeviceById(el.id);
+    //       this.eventsGateway.sendMessage(device);
+    //     }),
+    //   );
+    // }
     return template;
   }
 
   async findAll(): Promise<TemplateResponse[]> {
-    return this.prismaService.template.findMany({
-      include: { devices: true },
-    });
+    return this.prismaService.template.findMany();
   }
 
   async findById(id: number): Promise<TemplateResponse> {
     return this.prismaService.template.findUnique({
       where: { id: Number(id) },
-      include: { devices: true },
     });
   }
 }

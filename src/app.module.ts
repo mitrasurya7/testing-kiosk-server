@@ -8,6 +8,7 @@ import { ContentModule } from './content/content.module';
 import { FilesModule } from './files/files.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { EventsModule } from './events/events.module';
+import { LayoutModule } from './layout/layout.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EventsModule } from './events/events.module';
     FilesModule,
     GatewayModule,
     EventsModule,
+    LayoutModule,
   ],
   controllers: [],
   providers: [],

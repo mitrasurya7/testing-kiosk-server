@@ -49,10 +49,10 @@ model Device {
   lastOnline      DateTime?
   lastOffline     DateTime?
   instalationDate DateTime  @default(now())
+  usedLayout      Int       @default(1)
   location        Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
   locationId      Int?
-  template        Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  templateId      Int
+  layouts         Layout[]
   updatedAt       DateTime  @default(now()) @updatedAt
   createdAt       DateTime  @default(now())
 
@@ -60,29 +60,41 @@ model Device {
 }
 
 model Template {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(100)
-  htmlCode   String    @db.Text
-  coverImage String    @db.VarChar(100)
-  devices    Device[]
-  contents   Content[]
-  updatedAt  DateTime  @default(now()) @updatedAt
-  createdAt  DateTime  @default(now())
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(100)
+  htmlCode      String   @db.Text
+  coverImage    String   @db.VarChar(100)
+  totalContents String   @db.VarChar(100)
+  layouts       Layout[]
+  updatedAt     DateTime @default(now()) @updatedAt
+  createdAt     DateTime @default(now())
 
   @@map("templates")
 }
 
-model Content {
+model Layout {
   id         Int       @id @default(autoincrement())
-  title      String    @db.VarChar(100)
-  url        String    @db.VarChar(100)
-  type       String    @db.VarChar(100)
-  template   Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  status     Boolean   @default(false)
+  contentIds Int[]
+  Template   Template? @relation(fields: [templateId], references: [id])
   templateId Int?
-  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     Int?
+  Device     Device?   @relation(fields: [deviceId], references: [id])
+  deviceId   String?   @db.VarChar(100)
   updatedAt  DateTime  @default(now()) @updatedAt
   createdAt  DateTime  @default(now())
+
+  @@map("layouts")
+}
+
+model Content {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(100)
+  url       String   @db.VarChar(100)
+  type      String   @db.VarChar(100)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
 
   @@map("contents")
 }
