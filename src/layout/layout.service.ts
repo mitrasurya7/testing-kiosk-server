@@ -63,8 +63,10 @@ export class LayoutService {
 
   async getLayoutById(id: number): Promise<LayoutResponse> {
     return await this.prismaService.layout.findUnique({
-      where: {
-        id,
+      where: { id: Number(id) },
+      include: {
+        Template: true,
+        Device: true,
       },
     });
   }

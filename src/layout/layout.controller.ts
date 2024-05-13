@@ -46,14 +46,14 @@ export class LayoutController {
   }
 
   // TODO: Update layout
-  @Put('/:layoutId')
+  @Put('/:id')
   async updateLayout(
     @Auth() user: User,
     @Body() updateLayoutRequest: UpdateLayoutRequest,
-    @Param('layoutId') layoutId: number,
+    @Param('id') id: number,
   ) {
     const layout = await this.layoutService.updateLayout(
-      layoutId,
+      id,
       updateLayoutRequest,
     );
     return {
@@ -62,9 +62,9 @@ export class LayoutController {
   }
 
   // TODO: Get layout by id
-  @Get('/:layoutId')
-  async getLayoutById(@Auth() user: User, @Param('layoutId') layoutId: number) {
-    const layout = await this.layoutService.getLayoutById(layoutId);
+  @Get('/:id')
+  async getLayoutById(@Auth() user: User, @Param('id') id: number) {
+    const layout = await this.layoutService.getLayoutById(id);
     return {
       data: layout,
     };
@@ -72,9 +72,9 @@ export class LayoutController {
 
   // TODO: Delete layout
 
-  @Delete('/:layoutId')
-  async deleteLayout(@Auth() user: User, @Param('layoutId') layoutId: number) {
-    const layout = await this.layoutService.deleteLayout(layoutId);
+  @Delete('/:id')
+  async deleteLayout(@Auth() user: User, @Param('id') id: number) {
+    const layout = await this.layoutService.deleteLayout(id);
     return {
       data: layout,
     };
