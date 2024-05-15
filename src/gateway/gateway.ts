@@ -35,9 +35,11 @@ export class Gateway implements OnModuleInit {
           lastOnline: new Date(),
         });
 
-        const layouts = await this.layoutService.getLayoutsByDeviceId(deviceId);
+        const layout = await this.layoutService.getLayoutById(
+          updatedDevice.usedLayout,
+        );
 
-        socket.emit('device', { ...updatedDevice, layouts });
+        socket.emit('device', layout);
 
         // Handle disconnection
         socket.on('disconnect', async () => {
