@@ -110,6 +110,9 @@ export class LayoutService {
   async getLayoutsByDeviceId(deviceId: string): Promise<LayoutResponse[]> {
     const layouts = await this.prismaService.layout.findMany({
       where: { deviceId },
+      include: {
+        Template: true,
+      },
     });
 
     const contents = await this.getContents();
