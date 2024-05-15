@@ -3,6 +3,7 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 import { Server } from 'socket.io';
 import { DeviceService } from 'src/device/device.service';
+import { LayoutService } from 'src/layout/layout.service';
 
 @WebSocketGateway({
   cors: {
@@ -10,7 +11,10 @@ import { DeviceService } from 'src/device/device.service';
   },
 })
 export class Gateway implements OnModuleInit {
-  constructor(private deviceService: DeviceService) {}
+  constructor(
+    private deviceService: DeviceService,
+    private layoutService: LayoutService,
+  ) {}
   @WebSocketServer()
   server: Server;
 
@@ -30,7 +34,10 @@ export class Gateway implements OnModuleInit {
           status: true,
           lastOnline: new Date(),
         });
-        socket.emit('device', updatedDevice);
+
+        const layouts = await this.layoutService.getLayoutsByDeviceId(deviceId);
+
+        socket.emit('device', { ...updatedDevice, layouts });
 
         // Handle disconnection
         socket.on('disconnect', async () => {

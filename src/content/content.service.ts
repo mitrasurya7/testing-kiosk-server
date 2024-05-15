@@ -59,7 +59,7 @@ export class ContentService {
       // Save content data to the database
       const content = await this.prismaService.content.create({
         data: {
-          title: createContentRequest.name,
+          title: createContentRequest.title,
           type: ext,
           userId,
           url: `${process.env.BACKEND_URL}/api/files/${fileName}`, // Store the full file path in the database

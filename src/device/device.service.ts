@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -74,7 +69,11 @@ export class DeviceService {
         id,
       },
       include: {
-        layouts: true,
+        layouts: {
+          include: {
+            Template: true,
+          },
+        },
       },
     });
   }

@@ -13,5 +13,6 @@ import { FileFilter } from 'src/utils/file.filter';
   ],
   controllers: [ContentController],
   providers: [ContentService],
+  exports: [ContentService],
 })
 export class ContentModule {}

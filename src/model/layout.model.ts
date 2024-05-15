@@ -1,3 +1,5 @@
+import { ContentResponse } from './content.model';
+
 export class CreateLayoutRequest {
   status: boolean;
   templateId: number;
@@ -17,4 +19,5 @@ export class LayoutResponse {
   templateId: number;
   contentIds: number[];
   deviceId: string;
+  contents: ContentResponse[];
 }

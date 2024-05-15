@@ -9,14 +9,26 @@ import {
 } from 'src/model/layout.model';
 import { Logger } from 'winston';
 import { LayoutValidation } from './layout.validation';
+import { ContentService } from 'src/content/content.service';
+import { ContentResponse } from 'src/model/content.model';
 
 @Injectable()
 export class LayoutService {
+  private contents: ContentResponse[];
+
   constructor(
     private prismaService: PrismaService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private validationService: ValidationService,
+    private contentService: ContentService,
   ) {}
+
+  private async getContents(): Promise<any[]> {
+    if (!this.contents) {
+      this.contents = await this.contentService.findAll();
+    }
+    return this.contents;
+  }
 
   async createLayout(
     createLayoutRequest: CreateLayoutRequest,
@@ -33,11 +45,24 @@ export class LayoutService {
       data: createLayoutRequest,
     });
 
-    return result;
+    const contents = await this.getContents();
+    const selectedContents = contents.filter((content) =>
+      result.contentIds.includes(content.id),
+    );
+
+    return { ...result, contents: selectedContents };
   }
 
   async GetAllLayouts(): Promise<LayoutResponse[]> {
-    return await this.prismaService.layout.findMany();
+    const layouts = await this.prismaService.layout.findMany();
+    const contents = await this.getContents();
+    return layouts.map((layout) => {
+      const selectedContents = contents.filter((content) =>
+        layout.contentIds.includes(content.id),
+      );
+
+      return { ...layout, contents: selectedContents };
+    });
   }
 
   async updateLayout(
@@ -58,24 +83,56 @@ export class LayoutService {
     //   this.eventsGateway.sendMessage(layout);
     // }
 
-    return layout;
+    const contents = await this.getContents();
+    const selectedContents = contents.filter((content) =>
+      layout.contentIds.includes(content.id),
+    );
+
+    return { ...layout, contents: selectedContents };
   }
 
   async getLayoutById(id: number): Promise<LayoutResponse> {
-    return await this.prismaService.layout.findUnique({
+    const layout = await this.prismaService.layout.findUnique({
       where: { id: Number(id) },
       include: {
         Template: true,
         Device: true,
       },
     });
+    const contents = await this.getContents();
+    const selectedContents = contents.filter((content) =>
+      layout.contentIds.includes(content.id),
+    );
+
+    return { ...layout, contents: selectedContents };
+  }
+
+  async getLayoutsByDeviceId(deviceId: string): Promise<LayoutResponse[]> {
+    const layouts = await this.prismaService.layout.findMany({
+      where: { deviceId },
+    });
+
+    const contents = await this.getContents();
+    return layouts.map((layout) => {
+      const selectedContents = contents.filter((content) =>
+        layout.contentIds.includes(content.id),
+      );
+
+      return { ...layout, contents: selectedContents };
+    });
   }
 
   async deleteLayout(id: number): Promise<LayoutResponse> {
-    return await this.prismaService.layout.delete({
+    const layout = await this.prismaService.layout.delete({
       where: {
         id,
       },
     });
+    const contents = await this.getContents();
+    const selectedContents = contents.filter((content) =>
+      layout.contentIds.includes(content.id),
+    );
+
+    return { ...layout, contents: selectedContents };
   }
 }
