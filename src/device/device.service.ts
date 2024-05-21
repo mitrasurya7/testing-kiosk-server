@@ -57,7 +57,7 @@ export class DeviceService {
     });
 
     if (device) {
-      this.eventsGateway.sendMessage(device);
+      this.eventsGateway.sendMessage(device.usedLayout);
     }
 
     return device;

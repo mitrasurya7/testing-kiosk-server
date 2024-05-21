@@ -5,30 +5,38 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Injectable } from '@nestjs/common';
+import { LayoutService } from 'src/layout/layout.service';
 
 @Injectable()
 @WebSocketGateway({
   namespace: 'events',
 })
 export class EventsGateway implements OnGatewayConnection {
+  constructor(private layoutService: LayoutService) {}
   @WebSocketServer() server: Server;
 
   handleConnection(deviceId: string, ...args: any[]) {
     console.log('Device connected');
   }
 
-  handleDisconnect(deviceId: string) {
-    console.log('Device disconnected', deviceId);
+  handleDisconnect() {
+    console.log('Device disconnected');
   }
 
-  sendMessage(device: any) {
-    if (!device) {
+  async sendMessage(layoutId: number) {
+    if (!layoutId) {
       this.server.emit('device', 'Device not found');
       console.log('Device not found');
-      this.handleDisconnect(device.id);
+      this.handleDisconnect();
       return;
     }
 
-    this.server.emit('device', device);
+    const layout = await this.layoutService.getLayoutById(layoutId);
+
+    if (layout) {
+      this.server.emit('device', layout);
+    }
+
+    this.handleDisconnect();
   }
 }
